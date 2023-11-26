@@ -30,12 +30,23 @@ async function run() {
     await client.connect();
 
     const userCollection = client.db('parcelDB').collection('users');
+    const bookCollection = client.db('parcelDB').collection('books');
+
+    // users
 
     app.post('/users', async(req, res) =>{
         const newUser = req.body;
         const result = await userCollection.insertOne(newUser);
         res.send(result);
     })
+
+    // bookings
+
+    app.post('/bookings', async(req, res) =>{
+      const bookItems = req.body;
+      const result = await bookCollection.insertOne(bookItems);
+      res.send(result);
+  })
 
 
     // Send a ping to confirm a successful connection
