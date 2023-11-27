@@ -37,6 +37,7 @@ async function run() {
 
     app.post('/jwt', async(req, res) =>{
       const newUser = req.body;
+      console.log(newUser);
       const token = jwt.sign(newUser, process.env.SECRET_TOKEN, {expiresIn: '1h'});
       res.send({token})
     })
@@ -69,48 +70,53 @@ async function run() {
       }
       next();
     }
-    const verifyDeliveryMen = async(req, res, next) =>{
-      const email = req.decoded.email;
-      const query = {email: email};
-      console.log('delivery query',query);
-      const user = await userCollection.findOne(query);
-      console.log('delivery user',user);
-      const isDeliveryMen = user?.role === 'deliveryMen';
-      console.log('is delivery men email',isDeliveryMen);
-      if(!isDeliveryMen){
-        return res.status(403).send({message: 'forbidden access'});
-      }
-      next();
-    }
+    // const verifyDeliveryMen = async(req, res, next) =>{
+    //   const email = req.decoded.email;
+    //   const query = {email: email};
+    //   console.log('delivery query',query);
+    //   const user = await userCollection.findOne(query);
+    //   console.log('delivery user',user);
+    //   const isDeliveryMen = user?.role === 'deliveryMen';
+    //   console.log('is delivery men email',isDeliveryMen);
+    //   if(!isDeliveryMen){
+    //     return res.status(403).send({message: 'forbidden access'});
+    //   }
+    //   next();
+    // }
 
     // users
 
-    app.get('/users', verifyToken, verifyAdmin, async(req, res) =>{
+    app.get('/users', verifyToken,  async(req, res) =>{
       
       const result = await userCollection.find().toArray();
       res.send(result);
     })
 
-    app.get('/users/admin/:email', verifyToken, verifyAdmin, async(req, res) =>{
+    app.get('/users/admin/:email', verifyToken,  async(req, res) =>{
       const email = req.params.email;
       if(email !== req.decoded.email){
         return res.status(403).send({message: 'forbidden access'})
       }
       const query = {email: email};
       const user = await userCollection.findOne(query);
+      console.log('admin user', user);
       let admin = false;
       if(user){
         admin = user?.role === 'Admin';
       }
       res.send({admin});
     })
-    app.get('/users/deliveryMen/:email', verifyToken, verifyDeliveryMen,  async(req, res) =>{
+
+
+    app.get('/users/deliveryMen/:email', verifyToken,   async(req, res) =>{
       const email = req.params.email;
+
       if(email !== req.decoded.email){
         return res.status(403).send({message: 'forbidden access'})
       }
       const query = {email: email};
       const user = await userCollection.findOne(query);
+      console.log('delivery user', user);
       let deliveryMen = false;
       if(user){
         deliveryMen = user?.role === 'deliveryMen';
@@ -118,7 +124,9 @@ async function run() {
       res.send({deliveryMen});
     })
 
-    app.post('/users', async(req, res) =>{
+
+
+    app.post('/users',  async(req, res) =>{
         const newUser = req.body;
         // check email for social login
         const query = {email: newUser.email}
