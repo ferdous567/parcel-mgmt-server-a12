@@ -199,23 +199,6 @@ async function run() {
     })
 
 
-    app.get('/getSingDeliMen/:email', verifyToken, async (req, res) => {
-      const email = req.params.email;
-      console.log(email);
-      const query = { email: email }
-      console.log('query for email', query);
-      const result = await userCollection.findOne(query);
-      res.send(result);
-    })
-
-    app.get('/deliMenWiseBooking/:id', verifyToken, async (req, res) => {
-      const id = req.params.id;
-      console.log(id);
-      const query = { deliveryMen: id};
-      console.log('query for id', query);
-      const result = await bookCollection.find(query).toArray();
-      res.send(result);
-    })
 
 
     app.get('/deliveryMenWiseBooking/:id', verifyToken, async (req, res) => {
@@ -247,6 +230,19 @@ async function run() {
       res.send(result);
     })
 
+
+    app.patch('/manageHandleSend/:id', async(req, res) =>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updatedDoc = {
+        $set: req.body
+      };
+      const result = await bookCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    })
+
+
+
     app.patch('/updatePercel/:id', async(req, res) =>{
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)};
@@ -258,6 +254,11 @@ async function run() {
     })
 
     app.get('/bookings', verifyToken, async(req, res) =>{
+      const result = await bookCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/totalBookings', async(req, res) =>{
       const result = await bookCollection.find().toArray();
       res.send(result);
     })
