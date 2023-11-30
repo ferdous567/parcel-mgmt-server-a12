@@ -28,7 +28,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const userCollection = client.db('parcelDB').collection('users');
     const bookCollection = client.db('parcelDB').collection('books');
@@ -70,19 +70,7 @@ async function run() {
       }
       next();
     }
-    // const verifyDeliveryMen = async(req, res, next) =>{
-    //   const email = req.decoded.email;
-    //   const query = {email: email};
-    //   console.log('delivery query',query);
-    //   const user = await userCollection.findOne(query);
-    //   console.log('delivery user',user);
-    //   const isDeliveryMen = user?.role === 'deliveryMen';
-    //   console.log('is delivery men email',isDeliveryMen);
-    //   if(!isDeliveryMen){
-    //     return res.status(403).send({message: 'forbidden access'});
-    //   }
-    //   next();
-    // }
+    
 
     // users
 
